@@ -28,15 +28,15 @@ for i in range(N):
             G.add_edge(i,j+i)
 
 
-nx.random_reference(G, p, False, None)
+# nx.random_reference(G, p, False, None)
 
-# existing_edges = list(G.edges)
+existing_edges = list(G.edges)
 
-# for i in existing_edges:
-#     if (np.random.random()<p):
-#         index = (i+np.random.randint(1,N))%N
-#         if(index)
-#         G.add_edge(index)
+for i in existing_edges:
+    if (np.random.random()<p):
+        index = (i+np.random.randint(1,N))%N
+        if(index)
+        G.add_edge(index)
 
 
 # Circular Layout
