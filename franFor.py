@@ -24,6 +24,7 @@ import statistics
 
 try:
   import networkx as nx
+  import matplotlib.pyplot as plt
 except ImportError as error:
   raise SystemExit(
     "This script requires NetworkX. On Debian/Ubuntu, use a virtual environment:\n"
@@ -33,8 +34,8 @@ except ImportError as error:
   ) from error
 
 
-defaultNodes = 60
-defaultNeighbors = 4
+defaultNodes = 200
+defaultNeighbors = 6
 defaultTrials = 20
 defaultSeed = 2026
 defaultProbabilities = [0.0, 0.01, 0.03, 0.05, 0.10, 0.30, 1.0]
@@ -93,17 +94,11 @@ def largestConnectedSubgraph(graph):
 def computeTrialStatistics(nNodes, nNeighbors, probability, seed):
   graph = nx.watts_strogatz_graph(nNodes, nNeighbors, probability, seed = seed)
   connectedGraph, componentFraction = largestConnectedSubgraph(graph)
-  degree_list = {}
-
-  for i in range(nNeighbors-1):
-    degree_list[i] = graph.degree(i)
-
   return {
     "clustering": nx.average_clustering(graph),
     "pathLength": nx.average_shortest_path_length(connectedGraph),
     "diameter": nx.diameter(connectedGraph),
     "componentFraction": componentFraction,
-    "Histogram data": degree_list,
   }
 
 
@@ -141,9 +136,28 @@ def printInterpretation():
   print("  For small positive p, shortcuts usually reduce distances faster than they destroy clustering.")
   print("  For p close to 1, the graph behaves more like a random graph: short paths, lower clustering.")
 
+def finalPlots(probabilities, clusteringPlot, pathLengthPlot):
+  # print(probabilities)
+  # print(clusteringPlot)
+  # print(pathLengthPlot)
+  plt.figure() 
+  plt.plot(probabilities, clusteringPlot, 'o-')
+  plt.title("Clustering Coefficient vs p")
+
+  
+  plt.figure() 
+  plt.semilogx(probabilities, pathLengthPlot, 's-')
+  plt.title("Average Path Length vs p")
+
+  plt.show()
+  return 0
+
 def main():
   args = parseArguments()
   printHeader(args)
+
+  clusteringPlot = []
+  pathLengthPlot = []
 
   for probabilityIndex, probability in enumerate(args.probabilities):
     statisticsList = []
@@ -153,8 +167,11 @@ def main():
       statisticsList.append(trialStatistics)
 
     printStatisticsRow(probability, statisticsList, args.decimals)
+    clusteringPlot.append(meanStatistic(statisticsList, "clustering"))
+    pathLengthPlot.append(meanStatistic(statisticsList, "pathLength"))
 
   printInterpretation()
+  finalPlots(args.probabilities,clusteringPlot,pathLengthPlot)
 
 
 if __name__ == "__main__":
