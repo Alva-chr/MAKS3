@@ -94,11 +94,18 @@ def largestConnectedSubgraph(graph):
 def computeTrialStatistics(nNodes, nNeighbors, probability, seed):
   graph = nx.watts_strogatz_graph(nNodes, nNeighbors, probability, seed = seed)
   connectedGraph, componentFraction = largestConnectedSubgraph(graph)
+
+  nodes_list = []
+
+  for i in (len(nNeighbors)):
+    nodes_list[i] = graph.degree[i]
+
   return {
     "clustering": nx.average_clustering(graph),
     "pathLength": nx.average_shortest_path_length(connectedGraph),
     "diameter": nx.diameter(connectedGraph),
     "componentFraction": componentFraction,
+    "histogram data": nodes_list,
   }
 
 
@@ -121,6 +128,8 @@ def printStatisticsRow(probability, statisticsList, decimals):
   pathLength = meanStatistic(statisticsList, "pathLength")
   diameter = meanStatistic(statisticsList, "diameter")
   componentFraction = meanStatistic(statisticsList, "componentFraction")
+
+  
   print(
     f"{probability:<8.3g} "
     f"{clustering:>10.{decimals}f} "
