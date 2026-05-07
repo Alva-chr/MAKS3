@@ -104,13 +104,19 @@ def computeTrialStatistics(nNodes, nNeighbors, probability, seed):
     "clustering": nx.average_clustering(graph),
     "pathLength": nx.average_shortest_path_length(connectedGraph),
     "diameter": nx.diameter(connectedGraph),
+    "isconnected" : nx.is_connected(graph),
     "componentFraction": componentFraction,
+    "numberofconnectedcomponents" : nx.number_connected_components(graph),
+    "sizeoflargestcomponent" : len(max(nx.connected_components(graph), key = len)),
     "histogram data": nodes_list,
   }
 
-
 def meanStatistic(statisticsList, key):
   return statistics.mean(item[key] for item in statisticsList)
+
+def connectedpercent(statisticsList):
+  connectedPercent = (sum(item["isconnected"] for item in statisticsList)/len(statisticsList))
+  return connectedPercent
 
 
 def printHeader(args):
@@ -119,31 +125,29 @@ def printHeader(args):
   print(f"  neighbors per node in initial ring: {args.neighbors}")
   print(f"  trials per probability: {args.trials}")
   print()
-  print("p        clustering   path length   diameter   largest component")
-  print("---------------------------------------------------------------")
+  print("p        clustering   path length   diameter   fully connected (%)   largest component (%)  avr. groups   nodes in largest")
+  print("--------------------------------------------------------------------------------------------------------------------------")
 
 
 def printStatisticsRow(probability, statisticsList, decimals):
   clustering = meanStatistic(statisticsList, "clustering")
   pathLength = meanStatistic(statisticsList, "pathLength")
   diameter = meanStatistic(statisticsList, "diameter")
+  connectedpercent1 = connectedpercent(statisticsList)
   componentFraction = meanStatistic(statisticsList, "componentFraction")
+  numberofconnectedcomponents = meanStatistic(statisticsList, "numberofconnectedcomponents")
+  sizeoflargestcomponent = meanStatistic(statisticsList, "sizeoflargestcomponent")
 
-  
   print(
     f"{probability:<8.3g} "
     f"{clustering:>10.{decimals}f} "
-    f"{pathLength:>13.{decimals}f} "
-    f"{diameter:>10.{decimals}f} "
-    f"{componentFraction:>18.{decimals}f}"
+    f"{pathLength:>11.{decimals}f} "
+    f"{diameter:>12.{decimals}f} "
+    f"{connectedpercent1:>17.{decimals}f} "
+    f"{componentFraction:>18.{decimals}f} "
+    f"{numberofconnectedcomponents:>18.{decimals}f} "
+    f"{sizeoflargestcomponent:>18.{decimals}f} "
   )
-
-
-def printInterpretation():
-  print("\nInterpretation:")
-  print("  For p = 0 the graph is highly clustered but distances are relatively long.")
-  print("  For small positive p, shortcuts usually reduce distances faster than they destroy clustering.")
-  print("  For p close to 1, the graph behaves more like a random graph: short paths, lower clustering.")
 
 def finalPlots(probabilities, clusteringPlot, pathLengthPlot):
   # print(probabilities)
@@ -152,7 +156,6 @@ def finalPlots(probabilities, clusteringPlot, pathLengthPlot):
   plt.figure() 
   plt.plot(probabilities, clusteringPlot, 'o-')
   plt.title("Clustering Coefficient vs p")
-
   
   plt.figure() 
   plt.semilogx(probabilities, pathLengthPlot, 's-')
@@ -179,7 +182,6 @@ def main():
     clusteringPlot.append(meanStatistic(statisticsList, "clustering"))
     pathLengthPlot.append(meanStatistic(statisticsList, "pathLength"))
 
-  printInterpretation()
   finalPlots(args.probabilities,clusteringPlot,pathLengthPlot)
 
 
