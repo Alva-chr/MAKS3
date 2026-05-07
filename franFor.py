@@ -93,11 +93,17 @@ def largestConnectedSubgraph(graph):
 def computeTrialStatistics(nNodes, nNeighbors, probability, seed):
   graph = nx.watts_strogatz_graph(nNodes, nNeighbors, probability, seed = seed)
   connectedGraph, componentFraction = largestConnectedSubgraph(graph)
+  degree_list = {}
+
+  for i in range(nNeighbors-1):
+    degree_list[i] = graph.degree(i)
+
   return {
     "clustering": nx.average_clustering(graph),
     "pathLength": nx.average_shortest_path_length(connectedGraph),
     "diameter": nx.diameter(connectedGraph),
     "componentFraction": componentFraction,
+    "Histogram data": degree_list,
   }
 
 
@@ -134,7 +140,6 @@ def printInterpretation():
   print("  For p = 0 the graph is highly clustered but distances are relatively long.")
   print("  For small positive p, shortcuts usually reduce distances faster than they destroy clustering.")
   print("  For p close to 1, the graph behaves more like a random graph: short paths, lower clustering.")
-
 
 def main():
   args = parseArguments()
