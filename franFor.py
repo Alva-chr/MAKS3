@@ -95,11 +95,11 @@ def computeTrialStatistics(nNodes, nNeighbors, probability, seed):
   graph = nx.watts_strogatz_graph(nNodes, nNeighbors, probability, seed = seed)
   connectedGraph, componentFraction = largestConnectedSubgraph(graph)
 
-  nodes_list = []
+  nodes_list = [0 for _ in range(nNodes)]
 
-  for i in (len(nNeighbors)):
+  for i in range(nNodes):
     nodes_list[i] = graph.degree[i]
-
+  
   return {
     "clustering": nx.average_clustering(graph),
     "pathLength": nx.average_shortest_path_length(connectedGraph),
@@ -128,7 +128,6 @@ def printHeader(args):
   print("p        clustering   path length   diameter   fully connected (%)   largest component (%)  avr. groups   nodes in largest")
   print("--------------------------------------------------------------------------------------------------------------------------")
 
-
 def printStatisticsRow(probability, statisticsList, decimals):
   clustering = meanStatistic(statisticsList, "clustering")
   pathLength = meanStatistic(statisticsList, "pathLength")
@@ -137,6 +136,32 @@ def printStatisticsRow(probability, statisticsList, decimals):
   componentFraction = meanStatistic(statisticsList, "componentFraction")
   numberofconnectedcomponents = meanStatistic(statisticsList, "numberofconnectedcomponents")
   sizeoflargestcomponent = meanStatistic(statisticsList, "sizeoflargestcomponent")
+  nodesDegrees = []
+
+
+
+  for trail in statisticsList:
+    nodesDegrees.extend(trail["histogram data"])
+
+  max_degree = max(nodesDegrees)
+  nodesPerDegrees = [0 for x in range(max_degree+1)]
+
+  for i in nodesDegrees:
+    nodesPerDegrees[i] += 1
+
+  numberOfTrails = len(statisticsList)
+  for i in range(len(nodesPerDegrees)):
+    nodesPerDegrees[i]/= numberOfTrails
+
+  plt.bar(range(len(nodesPerDegrees)), nodesPerDegrees, color='skyblue', edgecolor='black')
+
+  # Adding labels and title
+  plt.xlabel('Degrees ')
+  plt.ylabel('Average frequency')
+  plt.title(f'Average degree distrubution when p= {probability}')
+
+  # Display the plot
+  plt.show()
 
   print(
     f"{probability:<8.3g} "
@@ -150,19 +175,22 @@ def printStatisticsRow(probability, statisticsList, decimals):
   )
 
 def finalPlots(probabilities, clusteringPlot, pathLengthPlot):
-  # print(probabilities)
-  # print(clusteringPlot)
-  # print(pathLengthPlot)
+  dividedClustering = [x / clusteringPlot[0] for x in clusteringPlot]
+  dividedPathLength = [x / pathLengthPlot[0] for x in pathLengthPlot]
+
   plt.figure() 
-  plt.plot(probabilities, clusteringPlot, 'o-')
-  plt.title("Clustering Coefficient vs p")
+  plt.plot(probabilities, dividedClustering, 'o-')
+  plt.title("Average Clustering Coefficient vs p")
+  plt.xlabel("Probability of rewire p")
+  plt.ylabel("Average Clustering Coefficient C(p) / C(0)")
   
   plt.figure() 
-  plt.semilogx(probabilities, pathLengthPlot, 's-')
+  plt.plot(probabilities, dividedPathLength, 's-')
   plt.title("Average Path Length vs p")
+  plt.xlabel("Probability of rewire p")
+  plt.ylabel("l(p) / l(0)")
 
   plt.show()
-  return 0
 
 def main():
   args = parseArguments()
