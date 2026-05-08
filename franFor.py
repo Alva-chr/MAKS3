@@ -36,7 +36,7 @@ except ImportError as error:
 
 defaultNodes = 200
 defaultNeighbors = 6
-defaultTrials = 20
+defaultTrials = 10
 defaultSeed = 2026
 defaultProbabilities = [0.0, 0.01, 0.03, 0.05, 0.10, 0.30, 1.0]
 
@@ -193,6 +193,13 @@ def finalPlots(probabilities, clusteringPlot, pathLengthPlot):
   plt.show()
 
 def main():
+  font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 22}
+
+  plt.rc('font', **font)
+
+
   args = parseArguments()
   printHeader(args)
 
