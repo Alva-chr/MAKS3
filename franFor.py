@@ -14,7 +14,7 @@ Usage:
   python3 smallWorldWattsStrogatz.py --nodes 100 --neighbors 4 --trials 30
   python3 smallWorldWattsStrogatz.py --probabilities 0 0.01 0.05 0.1 0.5 1
 
-The script prints average statistics over several random trials. The small-world
+The script prints average statistics ovr several random trials. The small-world
 effect is visible when a small rewiring probability greatly reduces path length
 while clustering remains relatively high.
 """
@@ -38,7 +38,7 @@ defaultNodes = 200
 defaultNeighbors = 6
 defaultTrials = 10
 defaultSeed = 2026
-defaultProbabilities = [0.0, 0.01, 0.03, 0.05, 0.10, 0.30, 1.0]
+defaultProbabilities = [0.0, 0.0001, 0.001, 0.01, 0.03, 0.05, 0.10, 0.30, 1.0]
 
 
 def parseArguments():
@@ -179,16 +179,16 @@ def finalPlots(probabilities, clusteringPlot, pathLengthPlot):
   dividedPathLength = [x / pathLengthPlot[0] for x in pathLengthPlot]
 
   plt.figure() 
-  plt.plot(probabilities, dividedClustering, 'o-')
-  plt.title("Average Clustering Coefficient vs p")
+  plt.semilogx(probabilities, dividedClustering, 'o-', label="Average Clustering Coefficient vs p")
   plt.xlabel("Probability of rewire p")
-  plt.ylabel("Average Clustering Coefficient C(p) / C(0)")
+#   plt.ylabel("Average Clustering Coefficient C(p) / C(0)")
   
-  plt.figure() 
-  plt.plot(probabilities, dividedPathLength, 's-')
-  plt.title("Average Path Length vs p")
+  plt.semilogx(probabilities, dividedPathLength, 's-', label="Average Path Length vs p")
   plt.xlabel("Probability of rewire p")
-  plt.ylabel("l(p) / l(0)")
+#   plt.ylabel("l(p) / l(0)")
+  plt.ylabel("Clustering Coefficient, Path Length")
+
+  plt.title("Clustering Coefficient and Path Length vs Probability p")
 
   plt.show()
 
