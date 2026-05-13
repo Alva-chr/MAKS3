@@ -1,4 +1,8 @@
 """
+Group with Alva Christensson, Marcus Moritz, Emmy Salvén, Vilma Klauninger, Olivia Buhr, Elin Djurberg
+"""
+
+"""
  * smallWorldWattsStrogatz.py
  *
  * Copyright (c) 2026, Jordi-Lluis Figueras
