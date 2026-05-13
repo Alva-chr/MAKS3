@@ -125,8 +125,8 @@ def printHeader(args):
   print(f"  neighbors per node in initial ring: {args.neighbors}")
   print(f"  trials per probability: {args.trials}")
   print()
-  print("p        clustering   path length   diameter   fully connected (%)   largest component (%)  avr. groups   nodes in largest")
-  print("--------------------------------------------------------------------------------------------------------------------------")
+  print("p        clustering   path length   diameter   connected (%)   largest component (%)  avr. groups   nodes in largest")
+  print("---------------------------------------------------------------------------------------------------------------------")
 
 def printStatisticsRow(probability, statisticsList, decimals):
   clustering = meanStatistic(statisticsList, "clustering")
@@ -168,7 +168,7 @@ def printStatisticsRow(probability, statisticsList, decimals):
     f"{clustering:>10.{decimals}f} "
     f"{pathLength:>11.{decimals}f} "
     f"{diameter:>12.{decimals}f} "
-    f"{connectedpercent1:>17.{decimals}f} "
+    f"{connectedpercent1:>10.{decimals}f} "
     f"{componentFraction:>18.{decimals}f} "
     f"{numberofconnectedcomponents:>18.{decimals}f} "
     f"{sizeoflargestcomponent:>18.{decimals}f} "
